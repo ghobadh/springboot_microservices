@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/depratment-service/depratment-service.iml" filepath="$PROJECT_DIR$/depratment-service/depratment-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/springboot_microservices.iml" filepath="$PROJECT_DIR$/.idea/springboot_microservices.iml" />
     </modules>
   </component>
