@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
-    private RestTemplate restTemplate;
+    // I commented in to use WebClient instead
+    //  private RestTemplate restTemplate;
+
+    private WebClient webClient;
 
 
     @Override
@@ -41,11 +45,22 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(
                         () ->  new ResourceNotFoundException("employee with id " + id + " not found")
                 );
-        ResponseEntity<DepartmentDto> departmentDtoResp = restTemplate
-                .getForEntity("http://localhost:8080/dept/code/" +
-                        employeeDto.departmentCode(), DepartmentDto.class);
+//        ResponseEntity<DepartmentDto> departmentDtoResp = restTemplate
+//                .getForEntity("http://localhost:8080/dept/code/" +
+//                        employeeDto.departmentCode(), DepartmentDto.class);
+//        DepartmentDto departmentDto = departmentDtoResp.getBody();
 
-        DepartmentDto departmentDto = departmentDtoResp.getBody();
+        DepartmentDto departmentDto = webClient
+                .get()
+                .uri("http://localhost:8080/dept/code/" +
+                        employeeDto.departmentCode())
+                .retrieve()
+                .bodyToMono(DepartmentDto.class)
+                .block();
+
+
+
+
         APIResponseDto apiResponseDto = new APIResponseDto();
         apiResponseDto.setEmployeeDto(employeeDto);
         apiResponseDto.setDepartmentDto(departmentDto);
