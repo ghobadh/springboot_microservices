@@ -11,4 +11,5 @@ public interface DepartmentService {
     DepartmentDto saveDepartment(DepartmentDto departmentDto);
     DepartmentDto getDepartment(Long id);
     List<DepartmentDto> getAllDepartments();
+    DepartmentDto getDepartmentByCode(String code);
 }

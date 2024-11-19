@@ -46,5 +46,14 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public DepartmentDto getDepartmentByCode(String code) {
+        return  DepartmentMapper
+                .toDepartmentDto(departmentRepository
+                        .findByDepartmentCode(code)
+                        .orElseThrow( () -> new RuntimeException("Department with code " + code + " not found")));
+
+    }
+
 
 }
