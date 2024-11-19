@@ -1,5 +1,6 @@
 package ca.gforcesoftware.microservice.employeeservice.controller;
 
+import ca.gforcesoftware.microservice.employeeservice.dto.APIResponseDto;
 import ca.gforcesoftware.microservice.employeeservice.dto.EmployeeDto;
 import ca.gforcesoftware.microservice.employeeservice.entity.Employee;
 import ca.gforcesoftware.microservice.employeeservice.service.EmployeeService;
@@ -27,8 +28,8 @@ public class EmployeeController {
 
     //GET http://localhost:8081/employee?employee_id=2
     @GetMapping
-    public ResponseEntity<EmployeeDto> getEmplpyee(@RequestParam (name="employee_id") Long id){
-        return new ResponseEntity<>(employeeService.getEmployee(id), HttpStatus.OK);
+    public ResponseEntity<APIResponseDto> getEmplpyee(@RequestParam (name="employee_id") Long id){
+        return new ResponseEntity<>(employeeService.getEmployeeById(id), HttpStatus.OK);
     }
 
     @GetMapping("/all")

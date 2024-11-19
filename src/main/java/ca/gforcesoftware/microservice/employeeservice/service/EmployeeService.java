@@ -1,5 +1,6 @@
 package ca.gforcesoftware.microservice.employeeservice.service;
 
+import ca.gforcesoftware.microservice.employeeservice.dto.APIResponseDto;
 import ca.gforcesoftware.microservice.employeeservice.dto.EmployeeDto;
 import ca.gforcesoftware.microservice.employeeservice.entity.Employee;
 
@@ -10,6 +11,6 @@ import java.util.List;
  */
 public interface EmployeeService {
     EmployeeDto createEmployee(EmployeeDto employeeDto);
-    EmployeeDto getEmployee(Long id);
+    APIResponseDto getEmployeeById(Long id);
     List<EmployeeDto> getAllEmployees();
 }
