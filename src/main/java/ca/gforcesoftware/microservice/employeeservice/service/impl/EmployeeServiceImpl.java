@@ -7,13 +7,14 @@ import ca.gforcesoftware.microservice.employeeservice.entity.Employee;
 import ca.gforcesoftware.microservice.employeeservice.exception.ResourceNotFoundException;
 import ca.gforcesoftware.microservice.employeeservice.mapper.EmployeeMapper;
 import ca.gforcesoftware.microservice.employeeservice.repository.EmployeeRepository;
+import ca.gforcesoftware.microservice.employeeservice.service.APIClient;
 import ca.gforcesoftware.microservice.employeeservice.service.EmployeeService;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
+//import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,8 +29,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     // I commented in to use WebClient instead
     //  private RestTemplate restTemplate;
 
-    private WebClient webClient;
+    // I commented in to use Feign instead
+    // private WebClient webClient;
 
+    private APIClient apiClient;
 
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
@@ -50,14 +53,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 //                        employeeDto.departmentCode(), DepartmentDto.class);
 //        DepartmentDto departmentDto = departmentDtoResp.getBody();
 
-        DepartmentDto departmentDto = webClient
-                .get()
-                .uri("http://localhost:8080/dept/code/" +
-                        employeeDto.departmentCode())
-                .retrieve()
-                .bodyToMono(DepartmentDto.class)
-                .block();
+        //This is for Webclient part
+//        DepartmentDto departmentDto = webClient
+//                .get()
+//                .uri("http://localhost:8080/dept/code/" +
+//                        employeeDto.departmentCode())
+//                .retrieve()
+//                .bodyToMono(DepartmentDto.class)
+//                .block();
 
+// This is for Spring Cloud Feign
+        DepartmentDto departmentDto = apiClient.getDepartmentByCode(employeeDto.departmentCode());
 
 
 
