@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * @author gavinhashemi on 2024-11-19
  */
-@FeignClient(url="http://localhost:8080" , value = "DEPARTMENT-SERVICE")
+//I am commenting this line, so I can use the load balancer from Eureka Service Registry
+//@FeignClient(url="http://localhost:8080" , value = "DEPARTMENT-SERVICE")
+
+//when the Eureka is running, Spring Cloud load balancer is working by default
+@FeignClient(name="DEPRATMENT-SERVICE")
 public interface APIClient {
 
     // This is exact department controller method in Department Service project, except
