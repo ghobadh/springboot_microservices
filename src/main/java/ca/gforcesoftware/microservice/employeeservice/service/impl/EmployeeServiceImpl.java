@@ -10,8 +10,10 @@ import ca.gforcesoftware.microservice.employeeservice.repository.EmployeeReposit
 import ca.gforcesoftware.microservice.employeeservice.service.APIClient;
 import ca.gforcesoftware.microservice.employeeservice.service.EmployeeService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  * @author gavinhashemi on 2024-11-18
  */
 @Service
+@Slf4j
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
@@ -42,9 +45,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
+    //@CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
+    @Retry(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponseDto getEmployeeById(Long id) {
+        log.info(" --> method getEmployeeById() id called");
         EmployeeDto employeeDto = employeeRepository
                 .findById(id)
                 .map(EmployeeMapper.INSTANCE::toEmployeeDto)
@@ -80,6 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public APIResponseDto getDefaultDepartment(Long id, Exception exception) {
+        log.info(" --> method getDefaultDepartment() id called");
         DepartmentDto departmentDto = new DepartmentDto();
         departmentDto.setId(id);
         departmentDto.setDepartmentCode("UNKOWN CODE");
