@@ -9,6 +9,7 @@ import ca.gforcesoftware.microservice.employeeservice.mapper.EmployeeMapper;
 import ca.gforcesoftware.microservice.employeeservice.repository.EmployeeRepository;
 import ca.gforcesoftware.microservice.employeeservice.service.APIClient;
 import ca.gforcesoftware.microservice.employeeservice.service.EmployeeService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return EmployeeMapper.INSTANCE.toEmployeeDto(savedEmployee);
     }
 
+
+    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponseDto getEmployeeById(Long id) {
         EmployeeDto employeeDto = employeeRepository
@@ -65,8 +68,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 // This is for Spring Cloud Feign
         DepartmentDto departmentDto = apiClient.getDepartmentByCode(employeeDto.departmentCode());
 
-
-
         APIResponseDto apiResponseDto = new APIResponseDto();
         apiResponseDto.setEmployeeDto(employeeDto);
         apiResponseDto.setDepartmentDto(departmentDto);
@@ -76,5 +77,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDto> getAllEmployees() {
         return employeeRepository.findAll().stream().map(EmployeeMapper.INSTANCE::toEmployeeDto).collect(Collectors.toList());
+    }
+
+    public APIResponseDto getDefaultDepartment(Long id, Exception exception) {
+        DepartmentDto departmentDto = new DepartmentDto();
+        departmentDto.setId(id);
+        departmentDto.setDepartmentCode("UNKOWN CODE");
+        departmentDto.setDepartmentDescription("CIRCUIT BREAKER RESPONSE");
+        departmentDto.setDepartmentName("UNKOWN NAME");
+        EmployeeDto employeeDto = employeeRepository
+                .findById(id)
+                .map(EmployeeMapper.INSTANCE::toEmployeeDto)
+                .orElseThrow(
+                        () ->  new ResourceNotFoundException("employee with id " + id + " not found")
+                );
+
+        APIResponseDto apiResponseDto = new APIResponseDto();
+        apiResponseDto.setEmployeeDto(employeeDto);
+        apiResponseDto.setDepartmentDto(departmentDto);
+        return apiResponseDto;
     }
 }
