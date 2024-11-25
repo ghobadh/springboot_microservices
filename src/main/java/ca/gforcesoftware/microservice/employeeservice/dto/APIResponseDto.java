@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class APIResponseDto {
     private EmployeeDto employeeDto;
     private DepartmentDto departmentDto;
+    private OrganizationDto organizationDto;
 }

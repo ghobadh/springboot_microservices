@@ -3,11 +3,13 @@ package ca.gforcesoftware.microservice.employeeservice.service.impl;
 import ca.gforcesoftware.microservice.employeeservice.dto.APIResponseDto;
 import ca.gforcesoftware.microservice.employeeservice.dto.DepartmentDto;
 import ca.gforcesoftware.microservice.employeeservice.dto.EmployeeDto;
+import ca.gforcesoftware.microservice.employeeservice.dto.OrganizationDto;
 import ca.gforcesoftware.microservice.employeeservice.entity.Employee;
 import ca.gforcesoftware.microservice.employeeservice.exception.ResourceNotFoundException;
 import ca.gforcesoftware.microservice.employeeservice.mapper.EmployeeMapper;
 import ca.gforcesoftware.microservice.employeeservice.repository.EmployeeRepository;
 import ca.gforcesoftware.microservice.employeeservice.service.APIClient;
+import ca.gforcesoftware.microservice.employeeservice.service.APIOrganizationClient;
 import ca.gforcesoftware.microservice.employeeservice.service.EmployeeService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
+    private final APIOrganizationClient aPIOrganizationClient;
     private EmployeeRepository employeeRepository;
     // I commented in to use WebClient instead
     //  private RestTemplate restTemplate;
@@ -37,6 +40,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     // private WebClient webClient;
 
     private APIClient apiClient;
+    private APIOrganizationClient apiOrganizationClient;
 
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
@@ -72,10 +76,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 // This is for Spring Cloud Feign
         DepartmentDto departmentDto = apiClient.getDepartmentByCode(employeeDto.departmentCode());
-
+        OrganizationDto organizationDto = apiOrganizationClient.getOrganization(employeeDto.organizationCode());
         APIResponseDto apiResponseDto = new APIResponseDto();
         apiResponseDto.setEmployeeDto(employeeDto);
         apiResponseDto.setDepartmentDto(departmentDto);
+        apiResponseDto.setOrganizationDto(organizationDto);
         return apiResponseDto;
     }
 
