@@ -4,6 +4,7 @@ This application is an initial project for using Spring Boot in Microservice Arc
 This projects has two main sub-projects. The name of the sub-projects are
 * Department Service
 * Employee Service
+* Organization Service
 * service registry
 * API gateway
 * Config Server
